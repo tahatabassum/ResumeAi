@@ -1,0 +1,6 @@
+{
+  "name": "ResumeAI",
+  "description": "An AI-powered resume builder containing 8 beautiful templates, real-time ATS scoring, custom skill autocomplete, and intelligent work experience, summary, and project generators.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
