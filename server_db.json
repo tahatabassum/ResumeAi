@@ -165,8 +165,9 @@
             "type": "personal",
             "description": "nmnn",
             "techStack": [
-              "mm",
-              "m"
+              "react",
+              "python",
+              "vs"
             ],
             "liveUrl": "nmm",
             "sourceUrl": "mmn,n",
@@ -198,7 +199,7 @@
       },
       "templateId": "creative-bold",
       "createdAt": "2026-06-15T20:18:37.120Z",
-      "updatedAt": "2026-06-15T20:32:54.078Z"
+      "updatedAt": "2026-06-15T21:39:08.174Z"
     }
   ]
 }

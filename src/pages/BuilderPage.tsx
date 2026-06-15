@@ -74,6 +74,27 @@ export default function BuilderPage({ onNavigate }: BuilderPageProps) {
   const [exportingDocx, setExportingDocx] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
 
+  // Local text state for tech stack inputs (keyed by project id)
+  // Allows typing freely without re-splitting on every keystroke
+  const [techStackInputs, setTechStackInputs] = useState<Record<string, string>>({});
+
+  // Sync local text state when a project is first seen
+  const getTechStackText = (proj: { id: string; techStack?: string[] }) => {
+    if (proj.id in techStackInputs) return techStackInputs[proj.id];
+    return proj.techStack ? proj.techStack.join(', ') : '';
+  };
+
+  const handleTechStackChange = (projId: string, value: string) => {
+    setTechStackInputs(prev => ({ ...prev, [projId]: value }));
+  };
+
+  const handleTechStackBlur = (projId: string, value: string) => {
+    const parsed = value.split(',').map(s => s.trim()).filter(Boolean);
+    updateProject(projId, { techStack: parsed });
+    // Re-normalize the display text
+    setTechStackInputs(prev => ({ ...prev, [projId]: parsed.join(', ') }));
+  };
+
   // Reusable Accordion Toggle
   const toggleSection = (section: string) => {
     setExpandedSection(expandedSection === section ? null : section);
@@ -959,8 +980,9 @@ export default function BuilderPage({ onNavigate }: BuilderPageProps) {
                           <Input
                             label="Tech Stack (comma-separated)"
                             placeholder="e.g. React, TypeScript, Node.js"
-                            value={proj.techStack ? proj.techStack.join(', ') : ''}
-                            onChange={(e) => updateProject(proj.id, { techStack: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
+                            value={getTechStackText(proj)}
+                            onChange={(e) => handleTechStackChange(proj.id, e.target.value)}
+                            onBlur={(e) => handleTechStackBlur(proj.id, e.target.value)}
                           />
                         </div>
                       </div>
