@@ -115,3 +115,13 @@ body {
     margin: 0;
   }
 }
+
+/* Hide scrollbars for chrome/safari/firefox/edge */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+

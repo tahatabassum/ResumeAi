@@ -74,6 +74,41 @@ export default function BuilderPage({ onNavigate }: BuilderPageProps) {
   const [exportingDocx, setExportingDocx] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
 
+  // Resize logic for responsive live preview
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+  const [previewScale, setPreviewScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (!previewContainerRef.current) return;
+      const parentWidth = previewContainerRef.current.clientWidth;
+      const padding = window.innerWidth < 640 ? 16 : 32;
+      const targetWidth = parentWidth - padding;
+      if (targetWidth < 794) {
+        setPreviewScale(Math.max(0.35, targetWidth / 794));
+      } else {
+        setPreviewScale(1);
+      }
+    };
+
+    updateScale();
+
+    const observer = new ResizeObserver(() => {
+      updateScale();
+    });
+
+    if (previewContainerRef.current) {
+      observer.observe(previewContainerRef.current);
+    }
+
+    window.addEventListener('resize', updateScale);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateScale);
+    };
+  }, [mobileTab]);
+
+
   // Local text state for tech stack inputs (keyed by project id)
   // Allows typing freely without re-splitting on every keystroke
   const [techStackInputs, setTechStackInputs] = useState<Record<string, string>>({});
@@ -370,12 +405,12 @@ export default function BuilderPage({ onNavigate }: BuilderPageProps) {
         </div>
 
         {/* 8 Template Horizontal Switcher Row under Geometric Balance */}
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 select-none mt-2 border-t border-[#f1f5f9] pt-2.5">
-          <div className="flex items-center gap-2">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 select-none mt-2 border-t border-[#f1f5f9] pt-2.5 w-full overflow-hidden">
+          <div className="flex items-center gap-2 w-full min-w-0 overflow-hidden">
             <span className="text-[10px] uppercase font-bold text-[#64748b] tracking-wider shrink-0 select-none">
               Design Token Switcher:
             </span>
-            <div className="flex items-center gap-2 bg-[#f1f5f9] p-1 rounded-lg">
+            <div className="flex items-center gap-2 bg-[#f1f5f9] p-1 rounded-lg overflow-x-auto w-full no-scrollbar">
               {TEMPLATE_LIST.map((tmpl) => {
                 const isSelected = activeResume.meta.templateId === tmpl.id;
                 
@@ -408,7 +443,7 @@ export default function BuilderPage({ onNavigate }: BuilderPageProps) {
                       updateMeta({ templateId: tmpl.id });
                       toast.success(`Active Template: ${tmpl.name}`);
                     }}
-                    className={`w-12 h-10 rounded flex items-center justify-center cursor-pointer transition-all relative overflow-hidden select-none hover:scale-105 active:scale-95 ${blockStyle} ${
+                    className={`w-12 h-10 shrink-0 rounded flex items-center justify-center cursor-pointer transition-all relative overflow-hidden select-none hover:scale-105 active:scale-95 ${blockStyle} ${
                       isSelected
                         ? 'ring-2 ring-[#2563eb] ring-offset-1 scale-105 shadow-md font-black opacity-100 z-10'
                         : 'opacity-50 hover:opacity-90 hover:ring-2 hover:ring-[#e2e8f0]'
@@ -423,8 +458,6 @@ export default function BuilderPage({ onNavigate }: BuilderPageProps) {
               })}
             </div>
           </div>
-
-
         </div>
       </header>
 
@@ -1159,6 +1192,7 @@ export default function BuilderPage({ onNavigate }: BuilderPageProps) {
 
         {/* RIGHT PREVIEW PANEL (A4 Paper Resume displaying in real-time) */}
         <section
+          ref={previewContainerRef}
           className={`flex-1 bg-slate-100 flex-col items-center p-6 sm:p-10 overflow-y-auto select-none relative ${
             mobileTab === 'preview' ? 'flex' : 'hidden md:flex'
           }`}
@@ -1171,10 +1205,23 @@ export default function BuilderPage({ onNavigate }: BuilderPageProps) {
             </span>
           </div>
 
-          {/* Centered paper container representing A4 dimensions */}
-          <div className="w-full max-w-[794px] min-h-[1123px] my-6 shadow-2xl self-center bg-white transform origin-top md:-translate-y-2 scale-90 sm:scale-100 flex flex-col">
-            <div ref={exportPDFRef} id="resume-print-container" className="flex-1 flex flex-col">
-              <ActiveTemplateComponent data={activeResume} />
+          {/* Centered paper container representing A4 dimensions scaled dynamically */}
+          <div 
+            style={{ height: `${1123 * previewScale}px` }}
+            className="w-full flex justify-center overflow-hidden my-6 select-none"
+          >
+            <div 
+              style={{ 
+                transform: `scale(${previewScale})`, 
+                transformOrigin: 'top center',
+                width: '794px',
+                height: '1123px',
+              }}
+              className="shadow-2xl bg-white flex flex-col shrink-0"
+            >
+              <div ref={exportPDFRef} id="resume-print-container" className="flex-1 flex flex-col">
+                <ActiveTemplateComponent data={activeResume} />
+              </div>
             </div>
           </div>
         </section>
