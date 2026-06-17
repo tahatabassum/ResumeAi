@@ -1205,19 +1205,25 @@ export default function BuilderPage({ onNavigate }: BuilderPageProps) {
             </span>
           </div>
 
-          {/* Centered paper container representing A4 dimensions scaled dynamically */}
+          {/* Centered paper container representing A4 dimensions scaled dynamically without layout box clipping */}
           <div 
-            style={{ height: `${1123 * previewScale}px` }}
-            className="w-full flex justify-center overflow-hidden my-6 select-none"
+            style={{ 
+              width: `${794 * previewScale}px`,
+              height: `${1123 * previewScale}px` 
+            }}
+            className="my-6 shadow-2xl bg-white flex flex-col shrink-0 relative overflow-hidden select-none"
           >
             <div 
               style={{ 
                 transform: `scale(${previewScale})`, 
-                transformOrigin: 'top center',
+                transformOrigin: 'top left',
                 width: '794px',
                 height: '1123px',
+                position: 'absolute',
+                left: 0,
+                top: 0,
               }}
-              className="shadow-2xl bg-white flex flex-col shrink-0"
+              className="flex flex-col"
             >
               <div ref={exportPDFRef} id="resume-print-container" className="flex-1 flex flex-col">
                 <ActiveTemplateComponent data={activeResume} />
