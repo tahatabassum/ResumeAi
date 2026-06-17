@@ -82,18 +82,30 @@ body {
   }
 
   /* Strip preview scaling translations, shadow boxes and fit page */
-  div.max-w-\[794px\] {
-    max-width: 100% !important;
+  #resume-preview-wrapper {
     width: 100% !important;
+    height: auto !important;
     min-height: 297mm !important;
     margin: 0 !important;
     padding: 0 !important;
     box-shadow: none !important;
     border: none !important;
-    transform: none !important;
+    overflow: visible !important;
+    position: static !important;
     background: #ffffff !important;
     display: flex !important;
     flex-direction: column !important;
+  }
+
+  #resume-preview-inner {
+    transform: none !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 297mm !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: #ffffff !important;
   }
 
   #resume-print-container {

@@ -1207,6 +1207,7 @@ export default function BuilderPage({ onNavigate }: BuilderPageProps) {
 
           {/* Centered paper container representing A4 dimensions scaled dynamically without layout box clipping */}
           <div 
+            id="resume-preview-wrapper"
             style={{ 
               width: `${794 * previewScale}px`,
               height: `${1123 * previewScale}px` 
@@ -1214,6 +1215,7 @@ export default function BuilderPage({ onNavigate }: BuilderPageProps) {
             className="my-6 shadow-2xl bg-white flex flex-col shrink-0 relative overflow-hidden select-none"
           >
             <div 
+              id="resume-preview-inner"
               style={{ 
                 transform: `scale(${previewScale})`, 
                 transformOrigin: 'top left',
